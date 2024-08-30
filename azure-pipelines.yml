@@ -1,0 +1,27 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.17' # Use the version of Node.js compatible with your NestJS project
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'Install dependencies'
+
+- script: |
+    npm run build
+  displayName: 'Build NestJS project'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'ToComparex2'  # Replace with your service connection name
+    appName: 'backendfabiantest'  # Replace with the name of your Azure Web App
+    package: '$(System.DefaultWorkingDirectory)/dist'  # Adjust the path if needed
+    appType: 'webApp'  # Or 'webAppWindows' based on your environment
+  displayName: 'Deploy to Azure Web App'
